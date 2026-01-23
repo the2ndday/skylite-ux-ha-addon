@@ -10,7 +10,11 @@ WORKDIR /app
 RUN git clone https://github.com/Wetzel402/SkyLite-UX.git .
 RUN npm install
 
-# IMPORTANT: Generate Prisma for the specific architecture (ARM/AMD64)
+# NUXT INGRESS FIX
+ENV NUXT_APP_BASE_URL="./"
+ENV NUXT_APP_BUILD_ASSETS_DIR="./_nuxt/"
+
+# Generate Prisma for the specific architecture (ARM/AMD64)
 RUN npx prisma generate
 
 # Build the app

@@ -15,6 +15,8 @@ fi
 export DATABASE_URL=$(bashio::config 'database_url')
 export HOST=0.0.0.0
 export PORT=3000
+export NUXT_APP_BASE_URL="./"
+export NUXT_APP_BUILD_ASSETS_DIR="./_nuxt/"
 
 bashio::log.info "Synchronizing database schema with Prisma..."
 if ! npx prisma migrate deploy; then
