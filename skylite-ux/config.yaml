@@ -1,16 +1,19 @@
 name: "SkyLite UX"
-description: "Family Manager for Home Assistant"
+description: "Self-hosted family manager (Calendar, Todos, Shopping Lists)"
 version: "1.0.0"
 slug: "skylite-ux"
 arch:
   - amd64
   - aarch64
   - armv7
-panel_icon: "mdi:calendar-check"
-panel_title: "SkyLite"
+init: false
 ingress: true
-port: 8080
+ingress_port: 8080
+panel_icon: "mdi:calendar-multiselect"
+panel_title: "SkyLite"
+map:
+  - config:rw
 options:
-  database_url: "postgresql://user:password@hostname:5432/dbname"
+  database_url: "postgresql://user:pass@localhost:5432/skylite"
 schema:
   database_url: str
