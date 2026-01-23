@@ -14,6 +14,8 @@ panel_title: "SkyLite"
 map:
   - config:rw
 options:
-  database_url: "postgresql://user:pass@localhost:5432/skylite"
+  database_url: "postgresql://user:password@HOSTNAME:5432/DATABASENAME"
 schema:
-  database_url: str
+  database_url: "str?"
+discovery:
+  - postgresql
