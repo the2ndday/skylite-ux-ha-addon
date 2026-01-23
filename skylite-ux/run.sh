@@ -14,7 +14,7 @@ fi
 
 export DATABASE_URL=$(bashio::config 'database_url')
 export HOST=0.0.0.0
-export PORT=8080
+export PORT=3000
 
 bashio::log.info "Synchronizing database schema with Prisma..."
 if ! npx prisma migrate deploy; then

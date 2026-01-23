@@ -16,8 +16,13 @@ RUN npx prisma generate
 # Build the app
 RUN npm run build
 
+# --- PORT CONFIGURATION ---
+EXPOSE 3000
+
 # Copy your startup script
 COPY run.sh /
 RUN chmod a+x /run.sh
 
 CMD [ "/run.sh" ]
+
+
