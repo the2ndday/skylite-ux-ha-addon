@@ -7,15 +7,16 @@ arch:
   - aarch64
   - armv7
 init: false
-ingress: true
-ingress_port: 3000
-panel_icon: "mdi:calendar-multiselect"
-panel_title: "SkyLite"
+ingress: false
+panel_icon: "mdi:calendar"
+panel_title: "SkyLite UX"
 map:
   - config:rw
 options:
   database_url: "postgresql://user:password@HOSTNAME:5432/DATABASENAME"
 schema:
   database_url: "str?"
+ports:
+  "3000/tcp": 3000
 discovery:
   - postgresql
