@@ -1,6 +1,6 @@
 name: "SkyLite UX"
 description: "Self-hosted family manager (Calendar, Todos, Shopping Lists)"
-version: "1.0.0"
+version: "0.0.1"
 slug: "skylite-ux"
 arch:
   - amd64
