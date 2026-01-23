@@ -1,0 +1,16 @@
+name: "SkyLite UX"
+description: "Family Manager for Home Assistant"
+version: "1.0.0"
+slug: "skylite-ux"
+arch:
+  - amd64
+  - aarch64
+  - armv7
+panel_icon: "mdi:calendar-check"
+panel_title: "SkyLite"
+ingress: true
+port: 8080
+options:
+  database_url: "postgresql://user:password@hostname:5432/dbname"
+schema:
+  database_url: str
