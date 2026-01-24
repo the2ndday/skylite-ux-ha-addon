@@ -1,0 +1,49 @@
+name: Auto-update Version
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight
+  workflow_dispatch:      # Allows you to run it manually
+
+jobs:
+  check-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repo
+        uses: actions/checkout@v4
+
+      - name: Get latest commit hash from Wetzel402
+        id: upstream
+        run: |
+          echo "hash=$(git ls-remote https://github.com/Wetzel402/SkyLite-UX.git HEAD | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          # We store the last-known hash in a file called 'upstream_version.txt'
+          if [ ! -f upstream_version.txt ] || [ "$(cat upstream_version.txt)" != "${{ steps.upstream.outputs.hash }}" ]; then
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Increment Version in config.yaml
+        if: steps.check.outputs.update_needed == 'true'
+        run: |
+          # This simple script bumps the last digit of your version (e.g., 1.0.2 -> 1.0.3)
+          CURRENT_VERSION=$(grep 'version:' skylite-ux/config.yaml | awk '{print $2}' | tr -d '"')
+          BASE_VERSION=$(echo $CURRENT_VERSION | cut -d. -f1-2)
+          PATCH_VERSION=$(echo $CURRENT_VERSION | cut -d. -f3)
+          NEW_VERSION="$BASE_VERSION.$((PATCH_VERSION + 1))"
+          
+          sed -i "s/version: .*/version: \"$NEW_VERSION\"/" skylite-ux/config.yaml
+          echo "${{ steps.upstream.outputs.hash }}" > upstream_version.txt
+
+      - name: Commit and Push
+        if: steps.check.outputs.update_needed == 'true'
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add skylite-ux/config.yaml upstream_version.txt
+          git commit -m "Auto-bump version to sync with Wetzel402 updates"
+          git push
