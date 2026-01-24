@@ -1,4 +1,6 @@
 # SkyLite-UX Home Assistant Add-on
+- Original project: https://github.com/Wetzel402/SkyLite-UX
+
 
 ## Prerequisites: Database Setup
 
@@ -11,7 +13,7 @@ SkyLite-UX requires a **PostgreSQL** database. To set one up easily within Home 
 2. **Install PostgreSQL:**
    - Search for **PostgreSQL** in the store and install it.
 3. **Start the Database:**
-   - Set a username and password in the PostgreSQL **Configuration** tab and click **Start**.
+   - Set a db name, username and password in the PostgreSQL **Configuration** tab and click **Start**.
 
 ## Installation
 
