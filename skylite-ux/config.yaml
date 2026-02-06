@@ -1,6 +1,6 @@
 name: "SkyLite UX"
 description: "Self-hosted family manager (Calendar, Todos, Shopping Lists)"
-version: "0.0.6"
+version: "0.0.7"
 webui: "http://[HOST]:[PORT:3000]/"
 slug: "skylite-ux"
 arch:
