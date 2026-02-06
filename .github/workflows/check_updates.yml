@@ -12,40 +12,50 @@ jobs:
       - name: Checkout your repo
         uses: actions/checkout@v4
 
-      - name: Get latest Tag from Wetzel402
+      - name: Get latest Release Data
         id: upstream
         run: |
-          # This specifically fetches the highest version tag
-          LATEST_TAG=$(git ls-remote --tags --sort='v:refname' https://github.com/Wetzel402/skylite-ux.git | tail -n1 | sed 's/.*\///')
-          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          # Fetch the latest release tag and the body text from GitHub API
+          DATA=$(curl -s https://api.github.com/repos/wetzel402/skylite-ux/releases/latest)
+          TAG=$(echo "$DATA" | jq -r .tag_name)
+          BODY=$(echo "$DATA" | jq -r .body)
+          
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "$BODY" > release_notes.txt
 
       - name: Check if update is needed
         id: check
         run: |
-          # Use 'upstream_tag.txt' to track the last version we saw
           if [ ! -f upstream_tag.txt ] || [ "$(cat upstream_tag.txt)" != "${{ steps.upstream.outputs.tag }}" ]; then
             echo "update_needed=true" >> $GITHUB_OUTPUT
           else
             echo "update_needed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Increment Version in config.yaml
+      - name: Update Version and Changelog
         if: steps.check.outputs.update_needed == 'true'
         run: |
-          # This simple script bumps the last digit of your version (e.g., 1.0.2 -> 1.0.3)
+          # 1. Bump the Version in config.yaml
           CURRENT_VERSION=$(grep 'version:' skylite-ux/config.yaml | awk '{print $2}' | tr -d '"')
           BASE_VERSION=$(echo $CURRENT_VERSION | cut -d. -f1-2)
           PATCH_VERSION=$(echo $CURRENT_VERSION | cut -d. -f3)
           NEW_VERSION="$BASE_VERSION.$((PATCH_VERSION + 1))"
-          
           sed -i "s/version: .*/version: \"$NEW_VERSION\"/" skylite-ux/config.yaml
-          echo "${{ steps.upstream.outputs.hash }}" > upstream_version.txt
+          
+          # 2. Update skylite-ux/CHANGELOG.md
+          touch skylite-ux/CHANGELOG.md
+          
+          # We create a header for the new version and prepend it to the existing log
+          echo -e "## $NEW_VERSION\n- Synced with upstream release: ${{ steps.upstream.outputs.tag }}\n\n$(cat release_notes.txt)\n\n$(cat skylite-ux/CHANGELOG.md)" > skylite-ux/CHANGELOG.md
+          
+          # 3. Save the tag for next time
+          echo "${{ steps.upstream.outputs.tag }}" > upstream_tag.txt
 
       - name: Commit and Push
         if: steps.check.outputs.update_needed == 'true'
         run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          git add skylite-ux/config.yaml upstream_version.txt
-          git commit -m "Auto-bump version to sync with Wetzel402 updates"
-          git push
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skylite-ux/config.yaml skylite-ux/CHANGELOG.md upstream_tag.txt
+          git commit -m "Auto-sync v$(cat upstream_tag.txt) and update CHANGELOG"
+          git push origin main
