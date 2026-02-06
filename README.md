@@ -1,5 +1,5 @@
 # Skylite-UX Home Assistant Add-on
-- Original project: https://github.com/Wetzel402/Sky~ite-UX
+- Original project: https://github.com/Wetzel402/Skylite-UX
 
 
 ## Prerequisites: Database Setup
