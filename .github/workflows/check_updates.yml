@@ -12,15 +12,18 @@ jobs:
       - name: Checkout your repo
         uses: actions/checkout@v4
 
-      - name: Get latest Release Data
+      - name: Get latest Tag and Body
         id: upstream
         run: |
-          # Fetch the latest release tag and the body text from GitHub API
-          DATA=$(curl -s https://api.github.com/repos/wetzel402/skylite-ux/releases/latest)
-          TAG=$(echo "$DATA" | jq -r .tag_name)
-          BODY=$(echo "$DATA" | jq -r .body)
-          
+          # 1. Get the latest tag name
+          TAG=$(curl -s https://api.github.com/repos/wetzel402/skylite-ux/tags | jq -r '.[0].name')
           echo "tag=$TAG" >> $GITHUB_OUTPUT
+          
+          # 2. Try to get release notes (falls back to "New version" if no release body exists)
+          BODY=$(curl -s https://api.github.com/repos/wetzel402/skylite-ux/releases/tags/$TAG | jq -r '.body // "New upstream release detected."')
+          
+          # Clean up the body text to remove any "null" or weird characters
+          if [ "$BODY" == "null" ]; then BODY="New version sync: $TAG"; fi
           echo "$BODY" > release_notes.txt
 
       - name: Check if update is needed
@@ -35,20 +38,18 @@ jobs:
       - name: Update Version and Changelog
         if: steps.check.outputs.update_needed == 'true'
         run: |
-          # 1. Bump the Version in config.yaml
+          # Bump version
           CURRENT_VERSION=$(grep 'version:' skylite-ux/config.yaml | awk '{print $2}' | tr -d '"')
           BASE_VERSION=$(echo $CURRENT_VERSION | cut -d. -f1-2)
           PATCH_VERSION=$(echo $CURRENT_VERSION | cut -d. -f3)
           NEW_VERSION="$BASE_VERSION.$((PATCH_VERSION + 1))"
           sed -i "s/version: .*/version: \"$NEW_VERSION\"/" skylite-ux/config.yaml
           
-          # 2. Update skylite-ux/CHANGELOG.md
+          # Prepend to Changelog (with a cleaner separator)
           touch skylite-ux/CHANGELOG.md
+          echo -e "## $NEW_VERSION\n- Synced with: ${{ steps.upstream.outputs.tag }}\n\n$(cat release_notes.txt)\n\n---\n\n$(cat skylite-ux/CHANGELOG.md)" > skylite-ux/CHANGELOG.md
           
-          # We create a header for the new version and prepend it to the existing log
-          echo -e "## $NEW_VERSION\n- Synced with upstream release: ${{ steps.upstream.outputs.tag }}\n\n$(cat release_notes.txt)\n\n$(cat skylite-ux/CHANGELOG.md)" > skylite-ux/CHANGELOG.md
-          
-          # 3. Save the tag for next time
+          # Save tag
           echo "${{ steps.upstream.outputs.tag }}" > upstream_tag.txt
 
       - name: Commit and Push
