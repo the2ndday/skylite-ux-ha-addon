@@ -1,3 +1,8 @@
+## 0.0.5
+- Synced with upstream release: null
+
+null
+
 # Changelog
 
 ## 0.0.2
