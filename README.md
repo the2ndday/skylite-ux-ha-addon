@@ -9,7 +9,7 @@ Skylite-UX requires a **PostgreSQL** database. To set one up easily within Home 
 1. **Add the Community Repository:**
    - Go to **Settings > Add-ons > Add-on Store**.
    - Click the **three dots** (top right) > **Repositories**.
-   - Add this URL: `https://github.com/alexbelgium/hassio-addons`
+   - Add this URL: `https://github.com/the2ndday/skylite-ux-ha-addon`
 2. **Install PostgreSQL:**
    - Search for **PostgreSQL** in the store and install it.
 3. **Start the Database:**
