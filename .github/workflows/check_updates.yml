@@ -16,7 +16,7 @@ jobs:
         id: upstream
         run: |
           # This specifically fetches the highest version tag
-          LATEST_TAG=$(git ls-remote --tags --sort='v:refname' https://github.com/Wetzel402/SkyLite-UX.git | tail -n1 | sed 's/.*\///')
+          LATEST_TAG=$(git ls-remote --tags --sort='v:refname' https://github.com/Wetzel402/skylite-ux.git | tail -n1 | sed 's/.*\///')
           echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
       - name: Check if update is needed

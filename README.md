@@ -1,10 +1,10 @@
-# SkyLite-UX Home Assistant Add-on
-- Original project: https://github.com/Wetzel402/SkyLite-UX
+# Skylite-UX Home Assistant Add-on
+- Original project: https://github.com/Wetzel402/Sky~ite-UX
 
 
 ## Prerequisites: Database Setup
 
-SkyLite-UX requires a **PostgreSQL** database. To set one up easily within Home Assistant:
+Skylite-UX requires a **PostgreSQL** database. To set one up easily within Home Assistant:
 
 1. **Add the Community Repository:**
    - Go to **Settings > Add-ons > Add-on Store**.
