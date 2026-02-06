@@ -12,16 +12,18 @@ jobs:
       - name: Checkout your repo
         uses: actions/checkout@v4
 
-      - name: Get latest commit hash from Wetzel402
+      - name: Get latest Tag from Wetzel402
         id: upstream
         run: |
-          echo "hash=$(git ls-remote https://github.com/Wetzel402/SkyLite-UX.git HEAD | awk '{print $1}')" >> $GITHUB_OUTPUT
+          # This specifically fetches the highest version tag
+          LATEST_TAG=$(git ls-remote --tags --sort='v:refname' https://github.com/Wetzel402/SkyLite-UX.git | tail -n1 | sed 's/.*\///')
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
       - name: Check if update is needed
         id: check
         run: |
-          # We store the last-known hash in a file called 'upstream_version.txt'
-          if [ ! -f upstream_version.txt ] || [ "$(cat upstream_version.txt)" != "${{ steps.upstream.outputs.hash }}" ]; then
+          # Use 'upstream_tag.txt' to track the last version we saw
+          if [ ! -f upstream_tag.txt ] || [ "$(cat upstream_tag.txt)" != "${{ steps.upstream.outputs.tag }}" ]; then
             echo "update_needed=true" >> $GITHUB_OUTPUT
           else
             echo "update_needed=false" >> $GITHUB_OUTPUT
