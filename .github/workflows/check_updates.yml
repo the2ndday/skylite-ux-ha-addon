@@ -43,7 +43,7 @@ jobs:
           BASE_VERSION=$(echo $CURRENT_VERSION | cut -d. -f1-2)
           PATCH_VERSION=$(echo $CURRENT_VERSION | cut -d. -f3)
           NEW_VERSION="$BASE_VERSION.$((PATCH_VERSION + 1))"
-          sed -i "s/version: .*/version: \"$NEW_VERSION\"/" skylite-ux/config.yaml
+          sed -i "s/^version: .*/version: \"$NEW_VERSION\"/" skylite-ux/config.yaml
           
           # Prepend to Changelog (with a cleaner separator)
           touch skylite-ux/CHANGELOG.md
